@@ -1,2 +1,2 @@
-project_id="knowledge-navigator-449510"
+project_id="henkel-ai25ber-2107"
 region="europe-west1"
