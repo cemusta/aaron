@@ -46,7 +46,17 @@ export const createTaskExtractionChain = () => {
   const model = createGeminiTextModel(0.1);
 
   // TODO: Define Runnable Sequence for task extraction
-  return RunnableSequence.from();
+  return RunnableSequence.from([
+    {
+      transcript: (input: any) => input.transcript,
+      format_instructions: () => taskParser.getFormatInstructions(),
+    },
+    PROMPT_TEMPLATES.taskExtraction,
+    model,
+    taskParser,
+  ]);
+
+
 };
 
 // Research Chain for a single task
@@ -130,7 +140,7 @@ ${chunk.content}
         //   url: chunk.url,
         // })),
       },
-      { callbacks: [langfuseHandler] }
+        { callbacks: [langfuseHandler] }
       );
 
       // Combine LLM results with search results to create final research result
@@ -139,10 +149,10 @@ ${chunk.content}
         task: task.description,
         docReferences: result.docReferences.map(ref => {
           // Find the corresponding search result
-          const sourceDoc = documentChunks.find(chunk => 
+          const sourceDoc = documentChunks.find(chunk =>
             chunk.url === ref.url || chunk.title === ref.title
           );
-          
+
           return {
             ...ref,
             url: sourceDoc?.url || ref.url, // Prioritize URL from search results
@@ -191,9 +201,12 @@ export async function processTranscript(transcript: string) {
     // 1. Extract tasks
     const taskChain = createTaskExtractionChain();
     // TODO: Add missing chain parameter
-    const tasks = await taskChain.invoke({  },
+    const tasks = await taskChain.invoke({
+      transcript: transcript,
+    },
       { callbacks: [langfuseHandler] }
     );
+
     console.log('Extracted tasks:', tasks);
 
     // 2. Research each task individually
@@ -216,8 +229,8 @@ export async function processTranscript(transcript: string) {
 
     // 3. Generate email using all research results
     // TODO: Create and Invoke correct generation chain
-    const emailChain = 
-    const email = await .invoke({
+    const emailChain = createEmailChain()
+    const email = await emailChain.invoke({
       tasks: JSON.stringify(tasks, null, 2),
       research: JSON.stringify(researchResults, null, 2),
       docLinks: researchResults
@@ -225,7 +238,7 @@ export async function processTranscript(transcript: string) {
         .map(ref => `- ${ref.title}: ${ref.url}`)
         .join("\n"),
     },
-    { callbacks: [langfuseHandler] }
+      { callbacks: [langfuseHandler] }
     );
 
     console.log("Email generated:", email);
