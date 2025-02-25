@@ -122,6 +122,7 @@ export class GeminiService {
             const model = this.getModel(options);
 
             // TODO: Gemini Content Generation
+            const result = await model.generateContent(prompt);
 
             const response = await result.response;
             return response.text();
