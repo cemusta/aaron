@@ -39,13 +39,20 @@ export async function POST(request: NextRequest) {
     
     // TODO: Implement Query Embedding
     const queryEmbeddings = 
+await embeddingService.getEmbeddings([body.query])
 
     const queryVector = queryEmbeddings[0];
     
     
     // Configure vector search query  
     // TODO: Implement nearest neighbor search
-    const vectorQuery: VectorQuery = 
+    const vectorQuery: VectorQuery = chunksCollection.findNearest({
+      queryVector,
+      vectorField: 'embedding',
+      limit: body.limit || 10,
+      distanceMeasure: 'EUCLIDEAN'
+    });
+
 
     // Execute search
     const vectorQuerySnapshot: VectorQuerySnapshot = await vectorQuery.get();

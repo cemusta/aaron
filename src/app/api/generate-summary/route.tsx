@@ -12,7 +12,22 @@ const langfuse = new Langfuse({
 // Create the RAG-aware summary prompt template
 
 // TODO: Implement the search result summary prompt template including required variables
-const summaryPrompt = PromptTemplate.fromTemplate(``);
+const summaryPrompt = PromptTemplate.fromTemplate(`
+You are a helpful assistant that summarizes search results based on a user's question.
+You will be provided with a question and a set of search results.
+Your task is to summarize the search results in a way that answers the question.
+If the search results do not contain any relevant information, you should say that you cannot answer the question.
+If the search results contain relevant information, you should summarize the information in a way that answers the question.
+You should not include any information that is not in the search results.
+You should not include any information that is not relevant to the question.
+You should not include any information that is not in the context.
+
+context is here: 
+{context}
+
+question is here: 
+{question}
+`);
 
 interface SearchResult {
   content: string;
@@ -55,8 +70,8 @@ export async function POST(request: NextRequest) {
 
     // TODO: Select the correct prompt parameter input
     const formattedPrompt = await summaryPrompt.format({
-      question: ,
-      context: ,
+      question: query,
+      context: context,
     });
     
     // Start Langfuse Generation Tracking
