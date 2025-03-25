@@ -1,5 +1,6 @@
 import React from 'react';
 import { Settings, MessageSquare, Search } from 'lucide-react';
+import Image from 'next/image';
 
 const LandingPage = () => {
   return (
@@ -7,7 +8,23 @@ const LandingPage = () => {
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Aaron the intern</h1>
+          <div className="flex justify-center items-center gap-3 mb-2">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              Hi, I&apos;m Aaron the Customer Engineering intern
+            </h1>
+            <div className="relative group cursor-pointer">
+              <Image
+                src="/aaron-the-intern.png"
+                alt="Aaron the intern"
+                width={48}
+                height={48}
+                className="w-12 h-12 transition-transform transform group-hover:scale-110"
+              />
+              <span className="absolute -top-1 -right-1 text-1xl animate-bounce group-hover:animate-none">
+                💧
+              </span>
+            </div>
+          </div>
           <p className="text-xl text-gray-600">
             Your AI assistant for technical research
           </p>
